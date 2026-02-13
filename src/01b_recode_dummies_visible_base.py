@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Re-code dummy variables with corrected reference levels.
+Re-code dummy variables with VISIBLE as reference for app attribute (instead of INVISIBLE).
 Speech Understanding: EASY (reference)
 Comfort: 1 hour (reference) 
-Hearing Performance: PARTIAL (reference) - was COMPLETE
-Visibility: INVISIBLE (reference) - was VISIBLE
+Hearing Performance: PARTIAL (reference)
+Visibility: VISIBLE (reference) - REVERSED from original
 """
 
 import pandas as pd
@@ -27,25 +27,21 @@ if 'comfort_2.0' in df.columns and 'comfort_4.0' in df.columns:
     df['comfort'] = 1  # reference
     df.loc[df['comfort_2.0'] == 1, 'comfort'] = 2
     df.loc[df['comfort_4.0'] == 1, 'comfort'] = 4
-    comfort_needs_recode = False
 elif 'comfort_1.0' in df.columns and 'comfort_2.0' in df.columns:
-    print("  - comfort: Has comfort_1.0, comfort_2.0 → reference is currently 4.0 ✗ (needs fix)")
+    print("  - comfort: Has comfort_1.0, comfort_2.0 → reference is currently 4.0 (fixing...)")
     df['comfort'] = 4  # reference
     df.loc[df['comfort_1.0'] == 1, 'comfort'] = 1
     df.loc[df['comfort_2.0'] == 1, 'comfort'] = 2
-    comfort_needs_recode = True
 
 # ATT: Check current dummies  
 if 'att_partial' in df.columns:
-    print("  - att: Has att_partial → reference is currently COMPLETE ✗ (needs fix)")
+    print("  - att: Has att_partial → reference is currently COMPLETE (fixing...)")
     df['att'] = 'COMPLETE'  # reference
     df.loc[df['att_partial'] == 1, 'att'] = 'PARTIAL'
-    att_needs_recode = True
 elif 'att_complete' in df.columns:
     print("  - att: Has att_complete → reference is currently PARTIAL ✓ (correct)")
     df['att'] = 'PARTIAL'  # reference
     df.loc[df['att_complete'] == 1, 'att'] = 'COMPLETE'
-    att_needs_recode = False
 
 # SPEECH: Check current dummies
 if 'speech_moderate' in df.columns and 'speech_more_effort' in df.columns:
@@ -53,33 +49,29 @@ if 'speech_moderate' in df.columns and 'speech_more_effort' in df.columns:
     df['speech'] = 'EASY'  # reference
     df.loc[df['speech_moderate'] == 1, 'speech'] = 'MODERATE'
     df.loc[df['speech_more_effort'] == 1, 'speech'] = 'MORE EFFORT'
-    speech_needs_recode = False
 elif 'speech_easy' in df.columns and 'speech_moderate' in df.columns:
-    print("  - speech: Has speech_easy, speech_moderate → reference is currently MORE EFFORT ✗ (needs fix)")
+    print("  - speech: Has speech_easy, speech_moderate → reference is currently MORE EFFORT (fixing...)")
     df['speech'] = 'MORE EFFORT'  # reference
     df.loc[df['speech_easy'] == 1, 'speech'] = 'EASY'
     df.loc[df['speech_moderate'] == 1, 'speech'] = 'MODERATE'
-    speech_needs_recode = True
 
 # APP: Check current dummies
 if 'app_visible' in df.columns:
-    print("  - app: Has app_visible → reference is currently INVISIBLE ✓ (correct)")
+    print("  - app: Has app_visible → reference is currently INVISIBLE (keeping for new base)")
     df['app'] = 'INVISIBLE'  # reference
     df.loc[df['app_visible'] == 1, 'app'] = 'VISIBLE'
-    app_needs_recode = False
 elif 'app_invisible' in df.columns:
-    print("  - app: Has app_invisible → reference is currently VISIBLE ✗ (needs fix)")
+    print("  - app: Has app_invisible → reference is currently VISIBLE (reconstructing...)")
     df['app'] = 'VISIBLE'  # reference
     df.loc[df['app_invisible'] == 1, 'app'] = 'INVISIBLE'
-    app_needs_recode = True
 
 # Create dummy coding with CORRECT references
-print("\n=== Creating dummy variables with correct references ===")
+print("\n=== Creating dummy variables with NEW references ===")
 print("Target references:")
 print("  - comfort: reference = 1")
 print("  - att: reference = PARTIAL")
 print("  - speech: reference = EASY")
-print("  - app: reference = VISIBLE") 
+print("  - app: reference = VISIBLE ← CHANGED (was INVISIBLE)") 
 
 # COMFORT: reference = 1 (code 2 and 4)
 df['comfort_2.0'] = 0
@@ -102,7 +94,7 @@ df.loc[df['speech'] == 'MORE EFFORT', 'speech_more_effort'] = 1
 df.loc[df['speech'] == 'EASY', 'speech_moderate'] = -1
 df.loc[df['speech'] == 'EASY', 'speech_more_effort'] = -1
 
-# APP: reference = VISIBLE (code INVISIBLE)
+# APP: reference = VISIBLE (code INVISIBLE) - REVERSED!
 df['app_invisible'] = 0
 df.loc[df['app'] == 'INVISIBLE', 'app_invisible'] = 1
 df.loc[df['app'] == 'VISIBLE', 'app_invisible'] = -1
@@ -112,8 +104,8 @@ final_cols = base_cols + ['comfort_2.0', 'comfort_4.0', 'att_complete',
                           'speech_moderate', 'speech_more_effort', 'app_invisible']
 df_final = df[final_cols]
 
-# Save
-output_path = '/Users/ryanabuijsers/Documents/Master/GPS/Data_analysis/Data/dce_long_model.csv'
+# Save with new filename to avoid overwriting original
+output_path = '/Users/ryanabuijsers/Documents/Master/GPS/Data_analysis/Data/dce_long_model_visible_base.csv'
 df_final.to_csv(output_path, index=False)
 print(f"\n✓ Saved recoded data to {output_path}")
 print(f"  Rows: {len(df_final)}")

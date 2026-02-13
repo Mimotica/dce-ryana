@@ -1,0 +1,84 @@
+MNL MODEL COEFFICIENTS - CORRECTED REFERENCE LEVELS (VISIBLE BASE)
+====================================================================
+
+Reference Levels:
+- Speech Understanding: EASY
+- Comfort: 1 hour
+- Hearing Performance: PARTIAL
+- Visibility: VISIBLE ← CHANGED (was INVISIBLE in original model)
+
+Coefficients Table:
+-----------------------------------------------------------
+Variable               Coefficient    Std. Error   t-value   p-value
+-----------------------------------------------------------
+is_optout              -0.9921        0.2148      -4.618    <0.001 ***
+price_eur              -0.0041        0.0016      -2.650     0.008 **
+
+comfort_2.0             0.1637        0.1123       1.458     0.145
+comfort_4.0             0.3256        0.1159       2.810     0.005 **
+
+att_complete            0.4033        0.0822       4.909    <0.001 ***
+
+speech_moderate        -0.1738        0.1183      -1.470     0.142
+speech_more_effort     -0.1437        0.1391      -1.033     0.302
+
+app_invisible          -0.1084        0.0643      -1.687     0.092 †
+-----------------------------------------------------------
+
+Significance codes: *** p<0.001, ** p<0.01, * p<0.05, † p<0.10
+
+
+INTERPRETATION:
+---------------
+1. COMFORT (reference = 1h):
+   - 2 hours: β = 0.164 (ns)
+   - 4 hours: β = 0.326 (p=0.005) → 4h significantly preferred over 1h
+
+2. SPEECH UNDERSTANDING (reference = EASY):
+   - Moderate: β = -0.174 (ns)
+   - More effort: β = -0.144 (ns)
+   - Both negative → "EASY" is preferred (as expected)
+
+3. HEARING PERFORMANCE (reference = PARTIAL):
+   - Complete: β = 0.403 (p<0.001) → strong preference for complete
+
+4. VISIBILITY (reference = VISIBLE):
+   - app_invisible coefficient: β = -0.108 (p=0.092)
+   - Utility for VISIBLE (reference) = +0.108 (implied)
+   - Utility for INVISIBLE = -0.108
+   - Negative coefficient → marginal preference for VISIBLE over INVISIBLE
+   
+   NOTE: This correctly reverses the interpretation from the original model.
+   In the original model (INVISIBLE as reference):
+      - app_visible β = +0.108 → marginal preference for VISIBLE
+   In this model (VISIBLE as reference):
+      - app_invisible β = -0.108 → marginal preference for VISIBLE
+   
+   Both models tell the same story: VISIBLE is marginally preferred!
+
+5. OPT-OUT:
+   - β = -0.992 (p<0.001) → strong preference to NOT opt-out
+
+6. PRICE:
+   - β = -0.004 (p=0.008) → as expected, negative coefficient
+
+
+COMPARISON WITH ORIGINAL MODEL (INVISIBLE as reference):
+---------------------------------------------------------
+Original model:
+   - Reference = INVISIBLE
+   - Variable: app_visible
+   - Coefficient: β = +0.108 (p=0.092)
+   - Interpretation: marginal preference for VISIBLE over INVISIBLE
+
+This model (VISIBLE as reference):
+   - Reference = VISIBLE  
+   - Variable: app_invisible
+   - Coefficient: β = -0.108 (p=0.092)
+   - Interpretation: marginal preference for VISIBLE over INVISIBLE
+
+The models are mathematically equivalent and tell the same story:
+   Utility(VISIBLE) - Utility(INVISIBLE) = +0.108
+   
+Both suggest a marginal preference for visible hearing aids, though the 
+effect is only marginally significant (p=0.092).

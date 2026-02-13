@@ -10,11 +10,6 @@ venv/
 dist/
 build/
 
-# Data files (sensitive/raw data)
-Data/dce_long_raw.csv
-Data/260209.csv
-Data/*.csv
-
 # System files
 .DS_Store
 .DS_Store?
